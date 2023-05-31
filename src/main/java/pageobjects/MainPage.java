@@ -44,6 +44,7 @@ public class MainPage {
         new WebDriverWait(driver, 5).until(driver -> (driver.findElement(orderButton).getText() != null
                 && !driver.findElement(orderButton).getText().isEmpty()));
     }
+
     public void waitFontToChange() throws InterruptedException {
         Thread.sleep(1500);
     }
@@ -67,26 +68,28 @@ public class MainPage {
     public void clickOnBulka() {
         driver.findElement(bulki).click();
     }
+
     public String getSouseColor() {
-        return driver.findElement(souse).getCssValue(color).toString();
+        return driver.findElement(souse).getCssValue(color);
     }
 
     public String getNachinkaColor() {
-        return driver.findElement(nachinka).getCssValue(color).toString();
+        return driver.findElement(nachinka).getCssValue(color);
     }
 
     public String getBulkiColor() {
-       return driver.findElement(bulki).getCssValue(color).toString();
+        return driver.findElement(bulki).getCssValue(color);
     }
 
     public String getBoxShadowBulki() {
-        return driver.findElement(bulkiTab).getCssValue(boxShadowColor).toString();
+        return driver.findElement(bulkiTab).getCssValue(boxShadowColor);
     }
+
     public String getBoxShadowSouse() {
-        return driver.findElement(souseTab).getCssValue(boxShadowColor).toString();
+        return driver.findElement(souseTab).getCssValue(boxShadowColor);
     }
 
     public String getBoxShadowNachinka() {
-        return driver.findElement(nachinkaTab).getCssValue(boxShadowColor).toString();
+        return driver.findElement(nachinkaTab).getCssValue(boxShadowColor);
     }
 }

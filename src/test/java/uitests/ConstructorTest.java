@@ -2,6 +2,7 @@ package uitests;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Description;
+import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
@@ -16,11 +17,19 @@ import static org.junit.Assert.assertNotEquals;
 public class ConstructorTest {
     private final String WHITE_COLOR = "rgba(255, 255, 255, 1)";
     private final String BOX_SHADOW_COLOR = "rgb(76, 76, 255) 0px -2px 0px 0px inset";
+    private final String colorShouldNotBeWhiteMessage = "Цвет текста не должен быть белым";
+    private final String colorShouldBeWhiteMessage = "Цвет текста должен быть белым";
+    private final String colorShouldBeBlueMessage = "Выбранная область должна быть с синей полоской снизу";
+    private MainPage objMainPage;
     private WebDriver driver;
 
     @Before
     public void startUp() {
         WebDriverManager.chromedriver().setup();
+        System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\yandexdriver.exe");
+        driver = new ChromeDriver();
+        driver.get("https://stellarburgers.nomoreparties.site/");
+        objMainPage = new MainPage(driver);
     }
 
     @After
@@ -28,33 +37,49 @@ public class ConstructorTest {
         driver.quit();
     }
 
+    @Step("Проверка цвета шрифта и подсветки")
+    public void checkColors(String shouldBeWhite, String shouldNotBeWhite1, String shouldNotBeWhite2, String shouldBeBlue) {
+        assertNotEquals(colorShouldBeWhiteMessage, WHITE_COLOR, shouldNotBeWhite1);
+        assertEquals(colorShouldNotBeWhiteMessage, WHITE_COLOR, shouldBeWhite);
+        assertNotEquals(colorShouldNotBeWhiteMessage, WHITE_COLOR, shouldNotBeWhite2);
+        assertEquals(colorShouldBeBlueMessage, BOX_SHADOW_COLOR, shouldBeBlue);
+    }
+
     @Test
-    @DisplayName("Переходы к разным разделам конструктора")
-    @Description("Проверка, что при переходе к разделу, цвет текста текущего раздела становится белым и снизу появляется синяя подсветка ")
-    public void constructorTest() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "src\\test\\resources\\yandexdriver.exe");
-        driver = new ChromeDriver();
-        driver.get("https://stellarburgers.nomoreparties.site/");
-        MainPage objMainPage = new MainPage(driver);
+    @DisplayName("Переход к разделу Соусы")
+    @Description("Проверка, что при переходе к разделу Соусы, цвет текста текущего раздела становится белым и снизу появляется синяя подсветка")
+    public void clickOnSouseTab() throws InterruptedException {
         objMainPage.clickOnSouse();
         objMainPage.waitFontToChange();
-        assertNotEquals("Цвет текста слова Булки не должен быть белым", WHITE_COLOR, objMainPage.getBulkiColor());
-        assertEquals("Цвет текста слова Соус должен быть белым", WHITE_COLOR, objMainPage.getSouseColor());
-        assertNotEquals("Цвет текста слова Начинка не должен быть белым", WHITE_COLOR, objMainPage.getNachinkaColor());
-        assertEquals("Выбранная область должна быть с синей полоской снизу", BOX_SHADOW_COLOR, objMainPage.getBoxShadowSouse());
+        checkColors(objMainPage.getSouseColor(),
+                objMainPage.getBulkiColor(),
+                objMainPage.getNachinkaColor(),
+                objMainPage.getBoxShadowSouse());
+    }
 
+    @Test
+    @DisplayName("Переход к разделу Начинки")
+    @Description("Проверка, что при переходе к разделу Начинки, цвет текста текущего раздела становится белым и снизу появляется синяя подсветка")
+    public void clickOnNachinkaTab() throws InterruptedException {
         objMainPage.clickOnNachinka();
         objMainPage.waitFontToChange();
-        assertNotEquals("Цвет текста слова Булки не должен быть белым", WHITE_COLOR, objMainPage.getBulkiColor());
-        assertNotEquals("Цвет текста слова Соус не должен быть белым", WHITE_COLOR, objMainPage.getSouseColor());
-        assertEquals("Цвет текста слова Начинка должен быть белым", WHITE_COLOR, objMainPage.getNachinkaColor());
-        assertEquals("Выбранная область должна быть с синей полоской снизу", BOX_SHADOW_COLOR, objMainPage.getBoxShadowNachinka());
+        checkColors(objMainPage.getNachinkaColor(),
+                objMainPage.getSouseColor(),
+                objMainPage.getBulkiColor(),
+                objMainPage.getBoxShadowNachinka());
+    }
 
+    @Test
+    @DisplayName("Переход к разделу Булки")
+    @Description("Проверка, что при переходе к разделу Булки, цвет текста текущего раздела становится белым и снизу появляется синяя подсветка")
+    public void clickOnBulkaTab() throws InterruptedException {
+        objMainPage.clickOnNachinka();
+        objMainPage.waitFontToChange();
         objMainPage.clickOnBulka();
         objMainPage.waitFontToChange();
-        assertEquals("Цвет текста слова Булки должен быть белым", WHITE_COLOR, objMainPage.getBulkiColor());
-        assertNotEquals("Цвет текста слова Соус не должен быть белым", WHITE_COLOR, objMainPage.getSouseColor());
-        assertNotEquals("Цвет текста слова Начинка не должен быть белым", WHITE_COLOR, objMainPage.getNachinkaColor());
-        assertEquals("Выбранная область должна быть с синей полоской снизу", BOX_SHADOW_COLOR, objMainPage.getBoxShadowBulki());
+        checkColors(objMainPage.getBulkiColor(),
+                objMainPage.getNachinkaColor(),
+                objMainPage.getSouseColor(),
+                objMainPage.getBoxShadowBulki());
     }
 }
